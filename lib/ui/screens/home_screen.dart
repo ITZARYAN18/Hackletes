@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../services/auth_services.dart';
 import '../widgets/app_header.dart';
 import '../widgets/category_card.dart';
@@ -14,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedCategoryIndex = 0;
+  String userName = 'User';
 
   final List<CategoryItem> categories = [
     CategoryItem(
@@ -22,8 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
       isSelected: true,
     ),
     CategoryItem(
-      icon:FontAwesomeIcons.personDrowning,
-      title: 'Jumps',
+      icon: Icons.sports_soccer,
+      title: 'Soccer',
       isSelected: false,
     ),
     CategoryItem(
@@ -34,8 +34,20 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  void _loadUserName() async {
+    final name = await AuthService.getDisplayName();
+    setState(() {
+      userName = name;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final userName = AuthService.currentUser ?? 'User';
     final selectedCategory = categories[selectedCategoryIndex].title;
 
     return Scaffold(
@@ -108,16 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _navigateToTest(String category) {
-    // Navigate based on selected category
-    if (category == 'Running') {
-      // Navigate to running test
-      Navigator.pushNamed(context, '/vertical-jump-test'); // placeholder
-    } else if (category == 'Soccer') {
-      // Navigate to soccer test
-      Navigator.pushNamed(context, '/vertical-jump-test'); // placeholder
-    } else if (category == 'Situp') {
-      Navigator.pushNamed(context, '/vertical-jump-test'); // Will be situp test
-    }
+    Navigator.pushNamed(context, '/vertical-jump-test');
   }
 
   void _showDownloadDialog() {

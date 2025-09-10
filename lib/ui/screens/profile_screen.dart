@@ -1,16 +1,33 @@
 import 'package:flutter/material.dart';
 
-import '../../routes/app.dart';
 import '../../services/auth_services.dart';
 
- // Ensure this is imported for navigation
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
 
-class ProfileScreen extends StatelessWidget {
+class _ProfileScreenState extends State<ProfileScreen> {
+  String userName = 'User';
+  String loginMethod = 'guest';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() async {
+    final name = await AuthService.getDisplayName();
+    final method = await AuthService.getLoginMethod();
+    setState(() {
+      userName = name;
+      loginMethod = method;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userName = AuthService.currentUser ?? 'User';
-    final loginMethod = AuthService.loginMethod ?? 'N/A';
-
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -60,12 +77,23 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Logged in via $loginMethod',
+                    'Signed in via ${loginMethod.toUpperCase()}',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
                     ),
                   ),
+                  if (AuthService.isGuest) ...[
+                    SizedBox(height: 10),
+                    Text(
+                      'Guest Account',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.orange[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -74,11 +102,7 @@ class ProfileScreen extends StatelessWidget {
             // Profile options
             _buildProfileOption(Icons.settings, 'Settings'),
             _buildProfileOption(Icons.help, 'Help & Support'),
-            _buildProfileOption(
-              Icons.logout,
-              'Logout',
-              onTap: () => _logout(context),
-            ),
+            _buildProfileOption(Icons.logout, 'Sign Out', onTap: () => _signOut()),
           ],
         ),
       ),
@@ -108,28 +132,28 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void _logout(BuildContext context) {
+  void _signOut() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Logout'),
-        content: Text('Are you sure you want to logout?'),
+        title: Text('Sign Out'),
+        content: Text('Are you sure you want to sign out?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              AuthService.logout();
+            onPressed: () async {
+              await AuthService.signOut();
               Navigator.pushNamedAndRemoveUntil(
                 context,
-                AppRoutes.login,
+                '/login',
                     (route) => false,
               );
             },
-            child: Text('Logout'),
+            child: Text('Sign Out'),
           ),
         ],
       ),

@@ -1,7 +1,6 @@
-// File: ui/screens/name_input_screen.dart
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../services/auth_services.dart';
 
 class NameInputScreen extends StatefulWidget {
   @override
@@ -10,11 +9,12 @@ class NameInputScreen extends StatefulWidget {
 
 class _NameInputScreenState extends State<NameInputScreen> {
   final TextEditingController _nameController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Color(0xFFF5F5F5),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -26,18 +26,18 @@ class _NameInputScreenState extends State<NameInputScreen> {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7B68EE),
+                  color: Color(0xFF7B68EE),
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.rocket_launch,
                   color: Colors.white,
                   size: 30,
                 ),
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30),
 
-              const Text(
+              Text(
                 'What\'s your name?',
                 style: TextStyle(
                   fontSize: 28,
@@ -45,16 +45,16 @@ class _NameInputScreenState extends State<NameInputScreen> {
                   color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
+              SizedBox(height: 10),
+              Text(
                 'We\'ll use this to personalize your experience',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey,
+                  color: Colors.grey[600],
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
 
               // Name Input Field
               Container(
@@ -65,13 +65,13 @@ class _NameInputScreenState extends State<NameInputScreen> {
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
                       blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      offset: Offset(0, 2),
                     ),
                   ],
                 ),
                 child: TextField(
                   controller: _nameController,
-                  decoration:  InputDecoration(
+                  decoration: InputDecoration(
                     hintText: 'Enter your name',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -88,31 +88,35 @@ class _NameInputScreenState extends State<NameInputScreen> {
                       color: Color(0xFF7B68EE),
                     ),
                   ),
-                  style: const TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16),
                   textCapitalization: TextCapitalization.words,
-                  onChanged: (text) => setState(() {}),
+                  onChanged: (value) => setState(() {}),
                 ),
               ),
 
-              const SizedBox(height: 30),
+              SizedBox(height: 30),
 
               // Continue Button
               Container(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: _nameController.text.trim().isEmpty
+                  onPressed: (_nameController.text.trim().isEmpty || _isLoading)
                       ? null
-                      : () => _continueToApp(),
+                      : _continueToApp,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7B68EE),
+                    backgroundColor: Color(0xFF7B68EE),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     elevation: 2,
                   ),
-                  child: const Text(
+                  child: _isLoading
+                      ? CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  )
+                      : Text(
                     'Continue',
                     style: TextStyle(
                       fontSize: 16,
@@ -122,14 +126,11 @@ class _NameInputScreenState extends State<NameInputScreen> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
 
               // Skip Button
               TextButton(
-                onPressed: () {
-                  _nameController.text = 'Guest';
-                  _continueToApp();
-                },
+                onPressed: _isLoading ? null : _skipToApp,
                 child: Text(
                   'Skip for now',
                   style: TextStyle(
@@ -146,15 +147,24 @@ class _NameInputScreenState extends State<NameInputScreen> {
   }
 
   void _continueToApp() async {
-    final name = _nameController.text.trim();
-    final user = FirebaseAuth.instance.currentUser;
+    setState(() => _isLoading = true);
 
-    if (user != null) {
-      await user.updateDisplayName(name.isNotEmpty ? name : 'Guest');
-      // No navigation here. The StreamBuilder in main.dart handles it
-    } else {
-      debugPrint("Error: Current user is null when trying to set display name.");
-    }
+    final name = _nameController.text.trim();
+    await AuthService.updateUserName(name);
+
+    Navigator.pushReplacementNamed(context, '/main-navigation');
+
+    setState(() => _isLoading = false);
+  }
+
+  void _skipToApp() async {
+    setState(() => _isLoading = true);
+
+    await AuthService.updateUserName('Guest');
+
+    Navigator.pushReplacementNamed(context, '/main-navigation');
+
+    setState(() => _isLoading = false);
   }
 
   @override

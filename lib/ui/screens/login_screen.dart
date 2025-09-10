@@ -1,13 +1,20 @@
-// File: ui/screens/login_screen.dart
+// ui/screens/login_screen.dart
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
-class LoginScreen extends StatelessWidget {
+import '../../services/auth_services.dart';
+
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Color(0xFFF5F5F5),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -19,17 +26,17 @@ class LoginScreen extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7B68EE),
+                  color: Color(0xFF7B68EE),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.rocket_launch,
                   color: Colors.white,
                   size: 40,
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
+              SizedBox(height: 20),
+              Text(
                 'Hackletes',
                 style: TextStyle(
                   fontSize: 32,
@@ -37,19 +44,19 @@ class LoginScreen extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
+              SizedBox(height: 10),
+              Text(
                 'Your Personal Training Companion',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey,
+                  color: Colors.grey[600],
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 60),
+              SizedBox(height: 60),
 
               // Login Options
-              const Text(
+              Text(
                 'Get Started',
                 style: TextStyle(
                   fontSize: 24,
@@ -57,29 +64,26 @@ class LoginScreen extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30),
 
               // Google Login Button
               _buildLoginButton(
-                context: context,
                 title: 'Continue with Google',
                 icon: Icons.account_circle,
                 color: Colors.red,
                 backgroundColor: Colors.white,
                 textColor: Colors.black87,
-                onPressed: () async {
-                  await _loginWithGoogle();
-                },
+                onPressed: _isLoading ? null : _signInWithGoogle,
               ),
 
-              const SizedBox(height: 15),
+              SizedBox(height: 20),
 
               // Divider
               Row(
                 children: [
-                  const Expanded(child: Divider(color: Colors.grey)),
+                  Expanded(child: Divider(color: Colors.grey[400])),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
                       'OR',
                       style: TextStyle(
@@ -88,26 +92,30 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Expanded(child: Divider(color: Colors.grey)),
+                  Expanded(child: Divider(color: Colors.grey[400])),
                 ],
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
 
               // Guest Login Button
               _buildLoginButton(
-                context: context,
                 title: 'Continue as Guest',
                 icon: Icons.person_outline,
-                color: const Color(0xFF7B68EE),
-                backgroundColor: const Color(0xFF7B68EE),
+                color: Color(0xFF7B68EE),
+                backgroundColor: Color(0xFF7B68EE),
                 textColor: Colors.white,
-                onPressed: () async {
-                  await _signInAnonymously();
-                },
+                onPressed: _isLoading ? null : _signInAsGuest,
               ),
 
-              const SizedBox(height: 30),
+              if (_isLoading) ...[
+                SizedBox(height: 20),
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7B68EE)),
+                ),
+              ],
+
+              SizedBox(height: 30),
 
               // Terms and Privacy
               Text(
@@ -126,13 +134,12 @@ class LoginScreen extends StatelessWidget {
   }
 
   Widget _buildLoginButton({
-    required BuildContext context,
     required String title,
     required IconData icon,
     required Color color,
     required Color backgroundColor,
     required Color textColor,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
   }) {
     return Container(
       width: double.infinity,
@@ -154,10 +161,10 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: color, size: 24),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -168,28 +175,51 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _loginWithGoogle() async {
+  void _signInWithGoogle() async {
+    setState(() => _isLoading = true);
+
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return;
+      final userCredential = await AuthService.signInWithGoogle();
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credential);
-    } on Exception catch (e) {
-      debugPrint('Google Sign-In Failed: $e');
+      if (userCredential != null) {
+        // Success - navigate to main app
+        Navigator.pushReplacementNamed(context, '/main-navigation');
+      } else {
+        // User canceled or error occurred
+        _showErrorSnackBar('Google sign-in was canceled or failed');
+      }
+    } catch (e) {
+      _showErrorSnackBar('An error occurred during Google sign-in');
     }
+
+    setState(() => _isLoading = false);
   }
 
-  Future<void> _signInAnonymously() async {
+  void _signInAsGuest() async {
+    setState(() => _isLoading = true);
+
     try {
-      await FirebaseAuth.instance.signInAnonymously();
-    } on Exception catch (e) {
-      debugPrint('Anonymous Sign-In Failed: $e');
+      final userCredential = await AuthService.signInAsGuest();
+
+      if (userCredential != null) {
+        // Success - navigate to name input for guests
+        Navigator.pushReplacementNamed(context, '/name-input');
+      } else {
+        _showErrorSnackBar('Failed to sign in as guest');
+      }
+    } catch (e) {
+      _showErrorSnackBar('An error occurred during guest sign-in');
     }
+
+    setState(() => _isLoading = false);
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 }
