@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'routes/app_routes.dart';
+import 'package:sih_ui/routes/app.dart';
+
 import 'ui/screens/splash_screen.dart';
 
 void main() async {
@@ -19,7 +20,7 @@ class HackletesApp extends StatelessWidget {
         fontFamily: 'Inter',
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SplashScreen(),
+      initialRoute: AppRoutes.splash,
       routes: AppRoutes.routes,
       debugShowCheckedModeBanner: false,
     );
