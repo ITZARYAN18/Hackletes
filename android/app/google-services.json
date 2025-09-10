@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "118023465186",
+    "project_id": "hackletes-cb7cd",
+    "storage_bucket": "hackletes-cb7cd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:118023465186:android:b1d637ed64ed0ae43016bb",
+        "android_client_info": {
+          "package_name": "com.example.sih_ui"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "118023465186-ppntmjsno7l4d063eso47nvs2sd3ctj6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sih_ui",
+            "certificate_hash": "976f9e5373f09d2e66652bee912b8061d4912eed"
+          }
+        },
+        {
+          "client_id": "118023465186-poe7fl480m8adauiru8bet0u4u7r9461.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwivDSUNAUKVUQIeaZyOpGyYPWL19fAdU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "118023465186-poe7fl480m8adauiru8bet0u4u7r9461.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "118023465186-0t5dbnrsrlg7ps2k7r99a3b0mm1daemo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sihUi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
