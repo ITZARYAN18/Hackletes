@@ -49,7 +49,7 @@ class AppHeader extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              Icons.person,
+              Icons.download,
               color: Colors.white,
               size: 20,
             ),

@@ -1,31 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../services/auth_services.dart';
-
-class ProfileScreen extends StatefulWidget {
-  @override
-  _ProfileScreenState createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  String userName = 'User';
-  String loginMethod = 'guest';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-  }
-
-  void _loadUserData() async {
-    final name = await AuthService.getDisplayName();
-    final method = await AuthService.getLoginMethod();
-    setState(() {
-      userName = name;
-      loginMethod = method;
-    });
-  }
-
+class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,41 +34,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CircleAvatar(
                     radius: 40,
                     backgroundColor: Color(0xFF7B68EE),
-                    child: Text(
-                      userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    child: Icon(
+                      Icons.person,
+                      size: 40,
+                      color: Colors.white,
                     ),
                   ),
                   SizedBox(height: 15),
                   Text(
-                    userName,
+                    'Arpan Sharma',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    'Signed in via ${loginMethod.toUpperCase()}',
+                    'Fitness Enthusiast',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
                     ),
                   ),
-                  if (AuthService.isGuest) ...[
-                    SizedBox(height: 10),
-                    Text(
-                      'Guest Account',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.orange[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -102,14 +63,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // Profile options
             _buildProfileOption(Icons.settings, 'Settings'),
             _buildProfileOption(Icons.help, 'Help & Support'),
-            _buildProfileOption(Icons.logout, 'Sign Out', onTap: () => _signOut()),
+            _buildProfileOption(Icons.logout, 'Logout'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileOption(IconData icon, String title, {VoidCallback? onTap}) {
+  Widget _buildProfileOption(IconData icon, String title) {
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -127,35 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leading: Icon(icon, color: Color(0xFF7B68EE)),
         title: Text(title),
         trailing: Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: onTap ?? () {},
-      ),
-    );
-  }
-
-  void _signOut() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Sign Out'),
-        content: Text('Are you sure you want to sign out?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await AuthService.signOut();
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/login',
-                    (route) => false,
-              );
-            },
-            child: Text('Sign Out'),
-          ),
-        ],
+        onTap: () {},
       ),
     );
   }
