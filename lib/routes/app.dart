@@ -20,10 +20,10 @@ class AppRoutes {
     workouts: (context) => WorkoutsScreen(),
     progress: (context) => ProgressScreen(),
     profile: (context) => ProfileScreen(),
-    verticalJumpTest: (context) => ModeSelectionScreen(),
-    runningTest: (context) => ModeSelectionScreen(),
-    situpCounter: (context) => ModeSelectionScreen(
+    verticalJumpTest: (context) => VideoSelectionScreen(),
+    runningTest: (context) => VideoSelectionScreen(),
+    situpCounter: (context) =>VideoSelectionScreen(),
 
-    ),
+
   };
 }
