@@ -101,8 +101,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Playing Video'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        // backgroundColor: Colors.blue,
+        // foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: Icon(

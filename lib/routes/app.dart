@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sih_ui/models/situp_feature.dart';
+import 'package:sih_ui/models/situp_screen.dart';
+import '../models/jump_screen.dart';
 import '../ui/screens/home_screen.dart';
 import '../ui/screens/workouts_screen.dart';
 import '../ui/screens/progress_screen.dart';
@@ -20,9 +23,9 @@ class AppRoutes {
     workouts: (context) => WorkoutsScreen(),
     progress: (context) => ProgressScreen(),
     profile: (context) => ProfileScreen(),
-    verticalJumpTest: (context) => VideoSelectionScreen(),
+    verticalJumpTest: (context) => JumpUploadScreen(),
     runningTest: (context) => VideoSelectionScreen(),
-    situpCounter: (context) =>VideoSelectionScreen(),
+    situpCounter: (context) =>UploadScreen(),
 
 
   };
