@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sih_ui/routes/app.dart';
+import 'package:sih_ui/streamlit-view.dart';
 // import 'routes/app_routes.dart';
 import 'ui/screens/main_navigation_screen.dart';
 
@@ -17,7 +18,9 @@ class HackletesApp extends StatelessWidget {
         fontFamily: 'Inter',
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MainNavigationScreen(),
+      // home: MainNavigationScreen(),
+      home: StreamlitView(),
+
       routes: AppRoutes.routes,
       debugShowCheckedModeBanner: false,
     );

@@ -38,6 +38,7 @@ dependencies:
   shared_preferences: ^2.2.2
 #  flutter_github_login:
   google_mlkit_pose_detection:
+  webview_flutter: ^4.7.0
   permission_handler:
   camera: ^0.10.0
   http: ^1.2.0

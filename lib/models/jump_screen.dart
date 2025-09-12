@@ -1,9 +1,11 @@
-// lib/jump_upload_screen.dart
+// lib/jump_screen.dart
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import '../services/video_player-screen.dart';
+ // Make sure this file exists
 
 // IMPORTANT: Replace this with your computer's IP address!
 const String serverIp = "10.65.107.114";
@@ -25,12 +27,7 @@ class _JumpUploadScreenState extends State<JumpUploadScreen> {
     final picker = ImagePicker();
     final XFile? videoFile = await picker.pickVideo(source: ImageSource.gallery);
 
-    if (videoFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("No video selected.")),
-      );
-      return;
-    }
+    if (videoFile == null) return;
 
     setState(() {
       _isLoading = true;
@@ -80,13 +77,7 @@ class _JumpUploadScreenState extends State<JumpUploadScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text(
-                'Upload a video to count jumps',
-                style: TextStyle(fontSize: 18, color: Colors.black54),
-              ),
-              const SizedBox(height: 40),
-
-              // Display the result card if data exists
+              // Result Card
               if (_resultData != null)
                 Card(
                   elevation: 4,
@@ -118,9 +109,29 @@ class _JumpUploadScreenState extends State<JumpUploadScreen> {
                     ),
                   ),
                 ),
+
+              const SizedBox(height: 20),
+
+              // Detailed Analysis Button
+              if (_resultData != null && _resultData!['processed_video_url'] != null)
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.analytics_outlined),
+                  label: const Text('View Detailed Analysis'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VideoPlayerScreen(
+                          videoUrl: _resultData!['processed_video_url'],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
               const SizedBox(height: 40),
 
-              // Loading indicator or upload button
+              // Loading indicator or the main Upload Button
               if (_isLoading)
                 const CircularProgressIndicator()
               else

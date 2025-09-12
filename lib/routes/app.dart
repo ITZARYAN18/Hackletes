@@ -25,7 +25,7 @@ class AppRoutes {
     profile: (context) => ProfileScreen(),
     verticalJumpTest: (context) => JumpUploadScreen(),
     runningTest: (context) => VideoSelectionScreen(),
-    situpCounter: (context) =>UploadScreen(),
+    situpCounter: (context) =>SitupUploadScreen(),
 
 
   };
