@@ -13,10 +13,10 @@ class _StreamlitViewState extends State<StreamlitView> {
 
   // --- CHOOSE THE CORRECT URL ---
   // For an Android Emulator, use this IP to connect to your computer's localhost
-  final String url = "http://10.0.2.2:8501";
+  // final String url = "http://10.0.2.2:8501";
 
   // For a REAL physical phone, find your computer's Wi-Fi IP and use it here
-  // final String url = "http://10.65.107.114:8501";
+  final String url = "http://10.65.107.114:8501";
 
   @override
   void initState() {
