@@ -44,7 +44,7 @@ class _UploadScreenState extends State<UploadScreen> {
   ChewieController? _chewieController;
 
   // --- IMPORTANT: CHANGE THIS TO YOUR COMPUTER'S IP ADDRESS ---
-  final String _apiUrl = "http://10.223.35.72:8000/predict_situp";
+  final String _apiUrl = "http://10.223.35.72:8000/predict_jump";
 
   @override
   void dispose() {
